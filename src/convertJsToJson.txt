@@ -1,0 +1,5 @@
+rm line1 (done)
+locDb[ -> nil 
+] = -> : 
+; -> ,\n
+last line:  , -> \n}

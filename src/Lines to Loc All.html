@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+    alo = [];
+    async function allLocs(){
+        x = await fetch("./allLocs.json");
+        allLocs = await x.json();
+        total = '';
+        setTimeout(() => {
+            for(a of allLocs){
+                if(allLocs[a] !== null){
+                    // console.log(a.name)
+                    total += a.name + "<br>";	
+                    alo.push(a.name);		
+                }
+            // console.log(a)
+            }
+        // document.write(total)
+        }, 500);	
+    }
+ali = [];
+    async function allLines(){
+        document.clear();
+        x = await fetch("./allLines.json");
+        allLines = await x.json();
+        x = await fetch("./allLocs.json");
+        allLocs = await x.json();
+        total ='';
+        setTimeout(() => {
+            for(a of allLines){
+                if(allLines[a] !== null){
+                    for(b of a){
+                        console.log(b);
+                        total += b.stopName + "<br>";
+                        ali.push(b.stopName + ":: "+b.routeId.slice(-1));
+                    }
+                }
+            // console.log(a)
+            }
+        // document.write(total)
+        }, 500);
+    }
+
+allLocs();
+allLines();
+    setTimeout(() => {
+        total2 ='';
+        // setTimeout(() => {
+        document.write("AllLoc ----- "+ "AllLines"+"<br>");
+        for(i=0;i<alo.length;i++){
+            // console.log(ali[i].substring(0,ali[i].length - 4))
+            if(alo[i] !== ali[i].substring(0, ali[i].length - 4)){
+                total2 += "<font color='red'>"+alo[i] + " || " + ali[i]+"</font><br>";
+            }else{
+                total2 += alo[i] + " || " + ali[i]+"<br>";
+            }
+        }
+        document.write(total2);
+        // }, 1000);
+    }, 1000);
+
+// var d_arr = {}, d_arr_cop= [];
+    async function getClosestStation(lat, lon){
+        let myloc = [];
+        myloc[0] = lat; console.log(lat);
+        myloc[1] = lon;
+        
+        let x = await fetch("./allLocs.json");
+        let allLocs = await x.json();
+
+        x = await fetch("./allLines.json");
+        let allLines = await x.json();
+
+        console.log(allLocs);
+        let num = allLocs; // store [lat,lon] for all given
+    
+        let d_arr = {}; // stationName/ p[id]
+        let d_arr_cop = []; //distances
+        let j;
+        for(j=0;j<num.length;j++){ //logging the distances of the stations with increment j for objects
+            console.log(i)
+            let distance = Math.sqrt((((num[j]["loc"][0] - myloc[0])*(num[j]["loc"][0] - myloc[0])) + (num[j]["loc"][1] - myloc[1])*(num[j]["loc"][1] - myloc[1])));
+            console.log("from home to "+ num[j].name + ". distance: "+distance);
+            d_arr[distance] = num[j].name; //input distance get the station Id
+            d_arr_cop[j] = distance;
+        }
+        d_arr_cop.sort();
+        d_arr_cop = [...new Set(d_arr_cop)];
+        let options_p_Arr = [];
+        d_arr_cop.forEach(x => {
+            let name = d_arr[x];
+            let line;
+            // let line = (allLines.find(x => x.stopName === name) !== undefined ? 'UN' : allLines.find(x => x.stopName === name).routeId.slice(-1));
+            for(let i=0;i<allLines.length;i++){
+                x = allLines[i];
+                let xa = x.find(y => y.stopName === name);
+                if(xa !== undefined){
+                    line = xa.routeId.slice(-1);
+                    break;
+                }
+            }
+            options_p_Arr.push(`<p id="${name}" key="${name}">
+                <img src="https://new.mta.info/themes/custom/bootstrap_mta/images/icons/${line}.svg" style="height:1em; padding:1px 0 2px 3px;">
+                ${name}</p>`);
+            // options_p_Arr.push(<p id={name} key={name} onClick={() => loadSchedulePage(mStation[name], name)} >{name}</p>)
+        });
+        console.log(options_p_Arr)
+        document.write(options_p_Arr.join(''))
+    }
+    // getClosestStation(40.73671957818318, -73.87569054132567);
+    </script>
+</head>
+<body>
+    <script>
+        
+        </script>
+</body>
+</html>
